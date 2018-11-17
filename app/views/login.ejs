@@ -1,0 +1,75 @@
+<div class="ui middle aligned center aligned grid" id="login-page">
+  <div class="column">
+    <h2 class="ui teal header">로그인</h2>
+    <form class="ui large form" method="post" action="/login">
+      <div class="ui stacked segment">
+        <div class="field">
+          <div class="ui left icon input" id="username_wrapper">
+            <i class="user icon"></i>
+            <input type="text" name="username" placeholder="Username">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui left icon input" id="password_wrapper">
+            <i class="lock icon"></i>
+            <input type="password" name="password" placeholder="Password">
+          </div>
+        </div>
+        <button type="submit" class="ui fluid large teal submit button">로그인</button>
+      </div>
+      <div class="ui error message">
+      <ul></ul>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const $form = $('form');
+const $username_wrapper = $("#username_wrapper");
+const $username = $("input[name='username']");
+const $password_wrapper = $("#password_wrapper");
+const $password = $("input[name='password']");
+const $error = $('.ui.error.message ul');
+
+$form.on('submit', function (event) {
+  $error.empty();
+  let error = [];
+  event.preventDefault();
+
+  if (!$username.val()) {
+    $username_wrapper.addClass('error');
+    error.push("유저 이름을 입력해주세요");
+  } else {
+    $username_wrapper.removeClass('error');
+  }
+  if (!$password.val()) {
+    $password_wrapper.addClass('error');
+    error.push("비밀번호를 입력해주세요");
+  } else {
+    $password_wrapper.removeClass('error');
+  }
+
+  if (error.length === 0) {
+    $.ajax({
+      method: 'POST',
+      url: '/api/sessions/login',
+      data: {
+        username: $username.val(),
+        password: $password.val()
+      }
+    }).fail((req, status, err) => {
+        console.log(err);
+        error.push('아이디/비밀번호가 옳지 않습니다');
+        $form.addClass('error');
+        $error.append(error.map(msg => `<li>${msg}</li>`).join(''));
+      })
+      .done(() => document.location.href = '/');
+    $form.removeClass('error');
+  } else {
+    $form.addClass('error');
+    $error.append(error.map(msg => `<li>${msg}</li>`).join(''));
+  }
+
+})
+</script>
