@@ -3,28 +3,61 @@
 
 <ul id="user-list">
 </ul>
+<a href="/group/<%= group._id %>/invite">Invinte User</a>
 
-<input type="text">
+<ul id="chat-list">
+<% for (message of messages) { %>
+  <li>
+    <strong><%= message.user.username %></strong>
+    <%= message.body %>
+  </li>
+<% } %>
+</ul>
+
+<form id="chat-form">
+<input type="text" id="chat-input">
 <button type="submit">보내기</button>
+</form>
 
 <script>
 var $userList = $('#user-list');
+var $chatList = $('#chat-list');
+var $chatForm = $('#chat-form');
+var $chatInput = $('#chat-input');
 var groupId = "<%= group._id %>";
+var socket = io.connect('');
 
-function addFriends() {
-
+function renderUser(user) {
+  return `<li class=${user.loggedIn ? "loggedIn" : "loggedOut" }>${user.username}</li>`;
 }
 
-$(document).ready(function() {
-  $.ajax({
-      url: '/api/group/' + groupId + '/users'
-    })
-    .fail(function(req, status, err) {
-      console.log(err);
-    })
-    .done(function(data) {
-      console.log(data);
-    })
+socket.on('connect', function () {
+  socket.emit('add user', "<%= user.id %>", groupId)
 })
+
+socket.on('update messages', function(message) {
+  $chatList.append(`<li><strong>${message.user.username}</strong> ${message.body}</li>`)
+});
+
+$(document).ready(function() {
+  // get user list
+  $.ajax({
+    url: '/api/group/' + groupId + '/users'
+  })
+  .fail(function(req, status, err) {
+  })
+  .done(function(data) {
+    $userList.html(data.users.map(renderUser).join(''))
+  })
+
+  $chatForm.submit(function() {
+    socket.emit('send message', $chatInput.val());
+    $chatInput.val('');
+    return false;
+  })
+
+  
+})
+
 
 </script>

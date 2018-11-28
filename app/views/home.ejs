@@ -1,7 +1,7 @@
 <h1><%= title %></h1>
 <p>current username: <%= user.username %></p>
 <p>asdfasdf</p>
-<button id="logout-button">LogOut</button>
+<a href="/logout">Logout</a>
 <ul>
   <% for (let group of groups) { %>
     <li>
@@ -13,9 +13,5 @@
 </ul>
 
 <script>
-var $logoutButton = $('#logout-button')
 
-$logoutButton.on('click', function() {
-  $.post('/logout')
-})
 </script>

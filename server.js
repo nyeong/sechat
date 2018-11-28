@@ -2,7 +2,7 @@ const express = require("express");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const http = require("http");
-const socketio = require("socket.io");
+const io = require("socket.io");
 const bodyParser = require("body-parser");
 const logger = require("morgan");
 const session = require("express-session");
@@ -31,7 +31,7 @@ class Server {
 
     this.app = express();
     this.http = http.createServer(this.app);
-    this.socket = socketio(this.http);
+    this.io = io(this.http);
   }
 
   setConfig() {
@@ -62,6 +62,7 @@ class Server {
       res.locals.user = req.session.user;
       next();
     });
+    require("./app/sockets")(this.io);
     this.app.use("/", require("./app/routers/login"));
     this.app.use("/", require("./app/routers/calendar"));
     this.app.use("/", require("./app/routers/group"));

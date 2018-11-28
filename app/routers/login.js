@@ -28,7 +28,7 @@ router.post("/api/login", (req, res) => {
 });
 
 // Logout
-router.post("/logout", (req, res) => {
+router.get("/logout", (req, res) => {
   if (!utils.isUserLoggedIn(req.session)) return res.redirect("/");
   req.session.destroy(err => {
     if (err) throw err;

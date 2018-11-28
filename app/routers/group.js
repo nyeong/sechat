@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/user");
+const Message = require("../models/message");
 const Group = require("../models/group");
 const utils = require("../utils");
 
@@ -12,9 +12,16 @@ router.get("/group/:group_id", (req, res) => {
     .exec((err, group) => {
       if (err) throw err;
       if (!group) return res.redirect("/");
-      res.render("group", {
-        group: group
-      });
+      Message.find({ group: group._id })
+        .populate("user")
+        .then(messages => {
+          console.log(messages);
+          res.render("group", {
+            group: group,
+            user: req.session.user,
+            messages: messages
+          });
+        });
     });
 });
 

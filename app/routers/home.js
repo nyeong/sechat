@@ -13,6 +13,7 @@ router.get("/", (req, res) => {
       if (err) throw err;
       res.render("home", {
         title: "title",
+        user: user,
         groups: user.groups
       });
     });
