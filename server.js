@@ -57,14 +57,17 @@ class Server {
   }
 
   includeRoutes() {
-    this.app.use("/", require("./app/routes/sessions"));
-    this.app.use("/", require("./app/routes/home"));
-    this.app.use("/groups", require("./app/routes/groups"));
-    this.app.use((req, res, next) => next(createError(404)));
     this.app.use((req, res, next) => {
       res.locals.title = "CSSM";
+      res.locals.user = req.session.user;
       next();
     });
+    this.app.use("/", require("./app/routers/login"));
+    this.app.use("/", require("./app/routers/calendar"));
+    this.app.use("/", require("./app/routers/group"));
+    this.app.use("/", require("./app/routers/home"));
+    this.app.use("/", require("./app/routers/invite"));
+    this.app.use((req, res, next) => next(createError(404)));
     this.app.use((err, req, res, next) => {
       res.locals.message = err.message;
       res.locals.error = req.app.get("env") === "development" ? err : {};

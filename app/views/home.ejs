@@ -1,3 +1,21 @@
 <h1><%= title %></h1>
 <p>current username: <%= user.username %></p>
-<p></p>
+<p>asdfasdf</p>
+<button id="logout-button">LogOut</button>
+<ul>
+  <% for (let group of groups) { %>
+    <li>
+      <a href="/group/<%= group._id %>">
+        <%= group.name %>
+      </a>
+    </li>
+  <% } %>
+</ul>
+
+<script>
+var $logoutButton = $('#logout-button')
+
+$logoutButton.on('click', function() {
+  $.post('/logout')
+})
+</script>

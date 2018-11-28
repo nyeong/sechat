@@ -53,13 +53,12 @@ $form.on('submit', function (event) {
   if (error.length === 0) {
     $.ajax({
       method: 'POST',
-      url: '/api/sessions/login',
+      url: '/api/login',
       data: {
         username: $username.val(),
         password: $password.val()
       }
     }).fail((req, status, err) => {
-        console.log(err);
         error.push('아이디/비밀번호가 옳지 않습니다');
         $form.addClass('error');
         $error.append(error.map(msg => `<li>${msg}</li>`).join(''));

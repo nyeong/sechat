@@ -1,19 +1,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Group = require("./group");
 
 const User = new Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },
-  groups: [Schema.Types.ObjectId]
+  groups: [{ type: Schema.Types.ObjectId, ref: "group" }]
 });
 
 User.methods.verifyPassword = function(password) {
   return this.password === password;
-};
-
-User.methods.getGroups = function() {
-  return this.groups.map(id => Group.findById(id));
 };
 
 User.statics.findAll = function() {

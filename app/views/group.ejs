@@ -1,0 +1,30 @@
+<h1><%= group.name %></h1>
+
+
+<ul id="user-list">
+</ul>
+
+<input type="text">
+<button type="submit">보내기</button>
+
+<script>
+var $userList = $('#user-list');
+var groupId = "<%= group._id %>";
+
+function addFriends() {
+
+}
+
+$(document).ready(function() {
+  $.ajax({
+      url: '/api/group/' + groupId + '/users'
+    })
+    .fail(function(req, status, err) {
+      console.log(err);
+    })
+    .done(function(data) {
+      console.log(data);
+    })
+})
+
+</script>
