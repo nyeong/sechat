@@ -5,7 +5,8 @@ const User = new Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },
   groups: [{ type: Schema.Types.ObjectId, ref: "group" }],
-  loggedIn: { type: Boolean, required: false }
+  loggedIn: { type: Boolean, required: false },
+  profile: String
 });
 
 User.methods.verifyPassword = function(password) {

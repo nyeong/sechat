@@ -1,3 +1,5 @@
+<%- include partials/site-menu.ejs %>
+
 <h1><%= title %></h1>
 <p>current username: <%= user.username %></p>
 <p>asdfasdf</p>
@@ -10,6 +12,7 @@
       </a>
     </li>
   <% } %>
+  <a href="/new_group/">새 그룹 만들기</a>
 </ul>
 
 <script>

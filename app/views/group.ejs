@@ -1,34 +1,66 @@
-<h1><%= group.name %></h1>
+<%- include partials/site-menu.ejs %>
+<div id="group-page">
+  <h1 id="group-name"><%= group.name %></h1>
+  <div class="ui button" id="rename-button">그룹 이름 바꾸기</div>
+  <div class="ui button" id="group-out-button">그룹 나가기</div>
+  <a class="ui button" href="/group/<%= group._id %>/invite">유저 초대하기</a>
 
+  <div id="user-list">
+  </div>
 
-<ul id="user-list">
-</ul>
-<a href="/group/<%= group._id %>/invite">Invinte User</a>
+  <div class="ui comments" id="chat-list">
+  <% for (message of messages) { %>
+    <div class="comment">
+      <div class="avatar">
+        <img src="/<%= message.user.profile %>.jpg"/>
+      </div>
+      <div class="content">
+        <div class="author"><%= message.user.username %></div>
+        <% if (message.type === "text" )  { %>
+          <div class="text">
+            <%= message.body %>
+          </div>
+        <% } else { %>
+          <pre>
+            <code class="<%= message.type %>"><%= message.body %>
+            </code>
+          </pre>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+  </div>
 
-<ul id="chat-list">
-<% for (message of messages) { %>
-  <li>
-    <strong><%= message.user.username %></strong>
-    <%= message.body %>
-  </li>
-<% } %>
-</ul>
-
-<form id="chat-form">
-<input type="text" id="chat-input">
-<button type="submit">보내기</button>
-</form>
-
+  <form class="ui form" id="chat-form">
+    <div class="field">
+      <label>Short Text</label>
+      <textarea id="chat-input" rows="2"></textarea>
+    </div>
+    <div class="field">
+      <a class="ui button" href="/group/<%= group._id %>/calendar" target="_blank" id="calendar-button">Calendar</a>
+      <div class="ui toggle button" id="highlight-button">Code</div>
+      <button class="ui right floated primary button" type="submit">보내기</button>
+    </div>
+  </form>
+</div>
 <script>
 var $userList = $('#user-list');
 var $chatList = $('#chat-list');
 var $chatForm = $('#chat-form');
 var $chatInput = $('#chat-input');
+var $renameButton = $('#rename-button');
+var $groupOutButton = $('#group-out-button');
 var groupId = "<%= group._id %>";
 var socket = io.connect('');
+var $highlightButton = $('#highlight-button');
+var isNeedHighlighting = false;
 
 function renderUser(user) {
-  return `<li class=${user.loggedIn ? "loggedIn" : "loggedOut" }>${user.username}</li>`;
+  $u = $('<span class="user-item"><img>');
+  $u.find('img').attr('src', '/' + user.profile + '.jpg');
+  $u.append($('<span>').text(user.username));
+  console.log($u);
+  return $u;
 }
 
 socket.on('connect', function () {
@@ -36,10 +68,38 @@ socket.on('connect', function () {
 })
 
 socket.on('update messages', function(message) {
-  $chatList.append(`<li><strong>${message.user.username}</strong> ${message.body}</li>`)
+  var template = `
+  <div class="avatar">
+    <img/>
+  </div>
+  <div class="content">
+    <div class="author"></div>
+  ` + (message.type === 'text'
+    ? `<div class="text"></div>`
+    : `<pre><code class="hljs"></code></pre></div>`);
+  var $m = $('<div class="comment">').html(template);
+
+  $m.find('img').attr('src', '/' + message.user.profile + '.jpg');
+  $m.find('.author').text(message.user.username);
+  if (message.type === "text") {
+    $m.find('.text').text(message.body);
+  } else {
+    var highlighted = hljs.highlight(message.type, message.body);
+    $m.find('code').append(highlighted.value);
+  }
+  $m.appendTo($chatList);
+  $chatList.animate({ scrollTop: $chatList.prop('scrollHeight') }, "slow");
 });
 
 $(document).ready(function() {
+  
+  // code highlight
+  $('pre code').each(function(i, block) {
+    hljs.highlightBlock(block);
+  });
+
+  $chatList.animate({ scrollTop: $chatList.prop('scrollHeight') }, "slow");
+
   // get user list
   $.ajax({
     url: '/api/group/' + groupId + '/users'
@@ -47,16 +107,56 @@ $(document).ready(function() {
   .fail(function(req, status, err) {
   })
   .done(function(data) {
-    $userList.html(data.users.map(renderUser).join(''))
+    $userList.append(data.users.map(renderUser));
+  })
+
+  $chatForm.keypress(function(e) {
+    if (e.which == 13 && !e.ctrlKey) {
+      e.preventDefault();
+      $(this).closest('form').submit();
+      return false;
+    }
   })
 
   $chatForm.submit(function() {
-    socket.emit('send message', $chatInput.val());
+    socket.emit('send message', $chatInput.val(), isNeedHighlighting
+      ? isNeedHighlighting
+      : "text");
     $chatInput.val('');
     return false;
   })
 
-  
+  $renameButton.click(function() {
+    var newName = prompt('새 이름을 입력해주세요');
+    $.ajax({
+      type: 'POST',
+      url: '/api/group/' + groupId +'/rename',
+      data: { new_name: newName }
+    }).done(function(data) {
+      $('#group-name').text(data.success)
+    })
+  })
+
+  $highlightButton.click(function() {
+    if (isNeedHighlighting === false) {
+      isNeedHighlighting = prompt('Select language');
+      $highlightButton.addClass('active');
+      $highlightButton.text(isNeedHighlighting);
+    } else {
+      isNeedHighlighting = false;
+      $highlightButton.removeClass('active');
+      $highlightButton.text('Code');
+    }
+  })
+
+  $groupOutButton.click(function () {
+    $.ajax({
+      type: 'POST',
+      url: '/api/group/' + groupId + '/groupOut',
+    }).done(function(data) {
+      window.location.href = '/';
+    })
+  })
 })
 
 

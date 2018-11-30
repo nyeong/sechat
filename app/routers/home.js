@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const utils = require("../utils");
+const Group = require("../models/group");
 const User = require("../models/user");
-const Group = require("../models/user");
 
 router.use(utils.sessionChcker);
 
@@ -13,10 +13,25 @@ router.get("/", (req, res) => {
       if (err) throw err;
       res.render("home", {
         title: "title",
-        user: user,
         groups: user.groups
       });
     });
+});
+
+router.get("/new_group/", (req, res) => {
+  Group.create(
+    {
+      name: "이름 없는 새 그룹",
+      users: [req.session.user.id]
+    },
+    (err, group) => {
+      if (err) throw err;
+      User.findById(req.session.user.id).then(user => {
+        user.groups.push(group);
+        user.save().then(_ => res.redirect("/group/" + group._id));
+      });
+    }
+  );
 });
 
 module.exports = router;

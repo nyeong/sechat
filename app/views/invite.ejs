@@ -1,0 +1,55 @@
+<%- include partials/site-menu.ejs %>
+
+<div id="invite-page">
+<ul>
+<% for (let user of users) { %>
+  <li
+    class="user <%= user.alreadyMember ? 'alreadyMember' : 'notOriginalMember'  %>"
+    data-userId='<%= user._id %>'
+  >
+    <%= user.username %> <%= user.active %>
+  </li>
+<% } %>
+</ul>
+
+<div class="ui primary button" id="invite-button">
+  초대하기
+</div>
+
+<div>
+
+<script>
+$(function () {
+  var selectedId = {};
+  var groupId = "<%= groupId %>";
+  $button = $('#invite-button');
+
+  $('.user').click(function() {
+    var $this = $(this);
+    if ($this.hasClass('notOriginalMember'))
+    {
+      if ($this.hasClass('active')) {
+        selectedId[$this.attr('data-userId')] = undefined;
+        $this.removeClass('active');
+      } else {
+        selectedId[$this.attr('data-userId')] = true;
+        $this.addClass('active');
+      }
+    }
+  })
+
+  $button.click(function() {
+    var users = [];
+    for (var u in selectedId) {
+      users.push(u);
+    }
+    $.ajax({
+      url: '/api/group/' + groupId + '/invite',
+      type: 'POST',
+      data: {
+        users: users
+      }
+    }).then(({success}) => document.location.href = success)
+  })
+});
+</script>

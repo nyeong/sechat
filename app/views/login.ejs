@@ -59,7 +59,7 @@ $form.on('submit', function (event) {
         password: $password.val()
       }
     }).fail((req, status, err) => {
-        error.push('아이디/비밀번호가 옳지 않습니다');
+        error.push(req.responseJSON.error);
         $form.addClass('error');
         $error.append(error.map(msg => `<li>${msg}</li>`).join(''));
       })
