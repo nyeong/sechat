@@ -179,3 +179,21 @@ caption a:visited {
   right: 7%;
   float: right;
 }
+
+#home-page .group {
+  display: block;
+  color: #333;
+}
+
+#home-page .group:hover {
+  display: block;
+  color: #777676;
+}
+
+#home-page .current-user {
+  font-weight: bold;
+}
+
+#home-page .user.item:not(.active) {
+  opacity: 0.4;
+}

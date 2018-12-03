@@ -1,19 +1,47 @@
 <%- include partials/site-menu.ejs %>
 
-<h1><%= title %></h1>
-<p>current username: <%= user.username %></p>
-<p>asdfasdf</p>
-<a href="/logout">Logout</a>
-<ul>
-  <% for (let group of groups) { %>
-    <li>
-      <a href="/group/<%= group._id %>">
-        <%= group.name %>
-      </a>
-    </li>
-  <% } %>
-  <a href="/new_group/">새 그룹 만들기</a>
-</ul>
+<div id="home-page" class="ui grid">
+  <div class="row">
+    <div id="home-page--groups" class="twelve wide column">
+      <header>
+        <h1><%= title %></h1>
+      </header>
+      <% for (let group of groups) { %>
+        <a href="/group/<%= group._id %>" class="group ui black segment">
+          <h2>
+              <%= group.name %>
+          </h2>
+        </a>
+      <% } %>
+        <a href="/new_group/" class="group ui red segment">
+          <h2>
+            새 그룹 만들기
+          </h2>
+        </a>
+    </div>
+
+    <div id="home-page--users" class="four wide column">
+      <p>
+        <span class="current-user">
+          <%= username %>
+        </span>
+        님! 안녕하세요!
+        <div class="ui list">
+          <% for (let user of users) { %>
+            <div class="user item <%= user.loggedIn ? 'active' : '' %>">
+              <img class="ui avatar image" src="/<%= user.profile %>.jpg" >
+              <div class="content">
+                <div class="header">
+                  <%= user.username %>
+                </div>
+              </div>
+            </div>
+          <% }%>
+        </div>
+      </p>
+    </div>
+  </div>
+</div>
 
 <script>
 
