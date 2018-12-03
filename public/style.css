@@ -15,7 +15,7 @@
 }
 
 #group-page #chat-list {
-  height: 50vh;
+  height: 55vh;
   max-width: 100%;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -31,7 +31,7 @@
 }
 
 #group-page #user-list {
-  margin: 10px 0;
+    margin: 10px 0;
 }
 
 #group-page #user-list .user-item {
