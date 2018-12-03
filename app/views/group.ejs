@@ -1,224 +1,170 @@
 <%- include partials/site-menu.ejs %>
-<!doctype html>
-<html lang="ko">
-    <head>
-        <meta charset="utf-8">
-            <meta content="width=device-width, initial-scale=1" name="viewport">
-                <style>
-                    #container {
-                        width: 1200px;
-                        margin: 10px auto;
-                        padding: 0;
-                        border: 1px solid #bcbcbc;
-                    }
-                    #header {
-                        padding: 20px;
-                        margin-bottom: 0;
-                    }
-                    #roomMainBar {
-                        width: 900px;
-						height: 670px;
-                        padding: 20px;
-                        margin-bottom: 20px;
-                        float: left;
-                        border: 1px solid #bcbcbc;
-                    }
-                    #roomBar {
-                        width: 860px;
-                        height: 120px;
-                        padding: 20px;
-                        margin-bottom: 10px;
-                        border: 1px solid #bcbcbc;
-                    }
-                    #currentUserbar {
-						position: relative;
-                        width: 298px;
-						height: 670px;
-                        padding: 20px;
-                        float: right;
-                        border: 1px solid #bcbcbc;
-                    }
-					#currentUserbar #userbar{
-						position: relative;
-                        width: 298px;
-						height: 650px;
-                        padding: 20px;
-                        float: right;
-						overflow-y: scroll;
-						overflow-x: hidden;
-                    }
-					#currentUserbar #bottombar {
-						position: absolute;
-						bottom: 0;
-                    }
-                </style>
-            </head>
-            <body>
-                <div id="container">
-                    <div id="roomMainBar">
-                        <div id="group-page">
-                            <h1 id="group-name">
-                                <%=group.name%><div class="ui button" id="rename-button"><input src="https://cdn2.iconfinder.com/data/icons/flat-ui-icons-24-px/24/new-24-512.png" style="width:20px;" type="image"/></div>
-                            </h1>
-                            <div class="ui comments" id="chat-list">
-                                <% for (message of messages) { %>
-                                    <div class="comment">
-                                        <div class="avatar">
-                                            <img src="/<%= message.user.profile %>.jpg"/>
-                                        </div>
-                                        <div class="content">
-                                            <div class="author">
-                                                <%=message.user.username%></div>
-                                            <% if (message.type === "text" )  { %>
-                                                <div class="text">
-                                                    <%=message.body%>
-                                                </div>
-                                                <% } else { %>
-                                                <pre>
-													<code class="<%= message.type %>"><%= message.body %>
-													</code>
-												</pre>
-                                            <% } %>
-                                        </div>
-                                    </div>
-                                <% } %>
-                            </div>
-                            <form class="ui form" id="chat-form">
-                                <div class="field">
-                                    <label>Short Text</label>
-                                    <textarea id="chat-input" rows="2"></textarea>
+
+<div id="container">
+    <div id="roomMainBar">
+        <div id="group-page">
+            <h1 id="group-name">
+                <%=group.name%><div class="ui button" id="rename-button"><input src="https://cdn2.iconfinder.com/data/icons/flat-ui-icons-24-px/24/new-24-512.png" style="width:20px;" type="image"/></div>
+            </h1>
+            <div class="ui comments" id="chat-list">
+                <% for (message of messages) { %>
+                    <div class="comment">
+                        <div class="avatar">
+                            <img src="/<%= message.user.profile %>.jpg"/>
+                        </div>
+                        <div class="content">
+                            <div class="author">
+                                <%=message.user.username%></div>
+                            <% if (message.type === "text" )  { %>
+                                <div class="text">
+                                    <%=message.body%>
                                 </div>
-                                <div class="field">
-                                    <a class="ui button" href="/group/<%= group._id %>/calendar" id="calendar-button" target="_blank"><input src="https://image.flaticon.com/icons/svg/34/34389.svg" style="width:20px;" type="image"/></a>
-                                    <div class="ui toggle button" id="highlight-button"><input src="https://static.thenounproject.com/png/37572-200.png" style="width:20px;" type="image"/></div>
-                                    <button class="ui right floated primary button" type="submit">보내기</button>
-                                </div>
-                            </form>
+                                <% } else { %>
+                                <pre>
+                                    <code class="<%= message.type %>"><%= message.body %>
+                                    </code>
+                                </pre>
+                            <% } %>
                         </div>
                     </div>
-					<div id="currentUserbar">
-                            <h2>현재 사용자</h2>
-                            <div id="user-list"></div>
-							<div id="bottombar">
-								<div class="ui button" style="bottom: 0;" id="group-out-button"><input src="https://cdn1.iconfinder.com/data/icons/interface-elements-ii-1/512/Logout-512.png" style="width:20px;" type="image"/></div>
-								<a class="ui button" href="/group/<%= group._id %>/invite" style="bottom: 0;"><input src="https://cdn1.iconfinder.com/data/icons/basic-line-6/1024/add-user-512.png" style="width:20px;" type="image"/></a>
-							</div?
-					</div>
+                <% } %>
+            </div>
+            <form class="ui form" id="chat-form">
+                <div class="field">
+                    <label>Short Text</label>
+                    <textarea id="chat-input" rows="2"></textarea>
                 </div>
-            </body>
-            <script>
-                var $userList = $('#user-list');
-                var $chatList = $('#chat-list');
-                var $chatForm = $('#chat-form');
-                var $chatInput = $('#chat-input');
-                var $renameButton = $('#rename-button');
-                var $groupOutButton = $('#group-out-button');
-                var groupId = "<%= group._id %>";
-                var socket = io.connect('');
-                var $highlightButton = $('#highlight-button');
-                var isNeedHighlighting = false;
-                function renderUser(user) {
-                    $u = $('<span class="user-item"><img>');
-                    $u.find('img').attr('src', '/' + user.profile + '.jpg');
-                    $u.append($('<span>').text(user.username));
-                    console.log($u);
-                    return $u;
-                }
-                socket.on('connect', function () {
-                    socket.emit('add user', "<%= user.id %>", groupId)
-                })
-                socket.on('update messages', function (message) {
-                    var template = `
+                <div class="field">
+                    <a class="ui button" href="/group/<%= group._id %>/calendar" id="calendar-button" target="_blank"><input src="https://image.flaticon.com/icons/svg/34/34389.svg" style="width:20px;" type="image"/></a>
+                    <div class="ui toggle button" id="highlight-button"><input src="https://static.thenounproject.com/png/37572-200.png" style="width:20px;" type="image"/></div>
+                    <button class="ui right floated primary button" type="submit">보내기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="currentUserbar">
+            <h2>현재 사용자</h2>
+            <div id="user-list"></div>
+            <div id="bottombar">
+                <div class="ui button" style="bottom: 0;" id="group-out-button"><input src="https://cdn1.iconfinder.com/data/icons/interface-elements-ii-1/512/Logout-512.png" style="width:20px;" type="image"/></div>
+                <a class="ui button" href="/group/<%= group._id %>/invite" style="bottom: 0;"><input src="https://cdn1.iconfinder.com/data/icons/basic-line-6/1024/add-user-512.png" style="width:20px;" type="image"/></a>
+            </div>
+    </div>
+</div>
+
+<script>
+    var $userList = $('#user-list');
+    var $chatList = $('#chat-list');
+    var $chatForm = $('#chat-form');
+    var $chatInput = $('#chat-input');
+    var $renameButton = $('#rename-button');
+    var $groupOutButton = $('#group-out-button');
+    var groupId = "<%= group._id %>";
+    var socket = io.connect('');
+    var $highlightButton = $('#highlight-button');
+    var isNeedHighlighting = false;
+    function renderUser(user) {
+        $u = $('<span class="user-item"><img>');
+        $u.find('img').attr('src', '/' + user.profile + '.jpg');
+        $u.append($('<span>').text(user.username));
+        console.log($u);
+        return $u;
+    }
+    socket.on('connect', function () {
+        socket.emit('add user', "<%= user.id %>", groupId)
+    })
+    socket.on('update messages', function (message) {
+        var template = `
   <div class="avatar">
     <img/>
   </div>
   <div class="content">
     <div class="author"></div>
   ` + (
-                        message.type === 'text'
-                        ? `<div class="text"></div>`
-                        : `<pre><code class="hljs"></code></pre></div>`);
-                    var $m = $('<div class="comment">').html(template);
-                    $m.find('img').attr('src', '/' + message.user.profile + '.jpg');
-                    $m.find('.author').text(message.user.username);
-                    if (message.type === "text") {
-                        $m.find('.text').text(message.body);
-                    } else {
-                        var highlighted = hljs.highlight(message.type, message.body);
-                        $m.find('code').append(highlighted.value);
-                    }
-                    $m.appendTo($chatList);
-                    $chatList.animate({
-                        scrollTop: $chatList.prop('scrollHeight')
-                    }, "slow");
-                });
-                $(document).ready(function () { // code highlight
-                    $('pre code').each(function (i, block) {
-                        hljs.highlightBlock(block);
-                    });
-                    $chatList.animate({
-                        scrollTop: $chatList.prop('scrollHeight')
-                    }, "slow");
-                    // get user list
-                    $
-                        .ajax({
-                            url: '/api/group/' + groupId + '/users'
-                        })
-                        .fail(function (req, status, err) {})
-                        .done(function (data) {
-                        $userList.append(data.users.map(renderUser));
-                    })
-                    $chatForm
-                        .keypress(function (e) {
-                        if (e.which == 13 && ! e.ctrlKey) {
-                            e.preventDefault();
-                            $(this).closest('form').submit();
-                            return false;
-                        }
-                    })
-                    $chatForm
-                        .submit(function () {
-                        socket.emit(
-                            'send message', $chatInput.val(), isNeedHighlighting
-                            ? isNeedHighlighting
-                            : "text");
-                        $chatInput.val('');
-                        return false;
-                    })
-                    $renameButton
-                        .click(function () {
-                        var newName = prompt('새 이름을 입력해주세요');
-                        $.ajax({
-                            type: 'POST',
-                            url: '/api/group/' + groupId + '/rename',
-                            data: {
-                                new_name: newName
-                            }
-                        }).done(function (data) {
-                            $('#group-name').text(data.success)
-                        })
-                    })
-                    $highlightButton
-                        .click(function () {
-                        if (isNeedHighlighting === false) {
-                            isNeedHighlighting = prompt('Select language');
-                            $highlightButton.addClass('active');
-                            $highlightButton.text(isNeedHighlighting);
-                        } else {
-                            isNeedHighlighting = false;
-                            $highlightButton.removeClass('active');
-                            $highlightButton.text('');
-                            $highlightButton.prepend('<img type="image" style="width:20px;" src="https://static.thenounproject.com/png/37572-200.png" />')
-                        }
-                    })
-                    $groupOutButton
-                        .click(function () {
-                        $.ajax({
-                            type: 'POST',
-                            url: '/api/group/' + groupId + '/groupOut'
-                        }).done(function (data) {
-                            window.location.href = '/';
-                        })
-                    })
-                })
-            </script>
+            message.type === 'text'
+            ? `<div class="text"></div>`
+            : `<pre><code class="hljs"></code></pre></div>`);
+        var $m = $('<div class="comment">').html(template);
+        $m.find('img').attr('src', '/' + message.user.profile + '.jpg');
+        $m.find('.author').text(message.user.username);
+        if (message.type === "text") {
+            $m.find('.text').text(message.body);
+        } else {
+            var highlighted = hljs.highlight(message.type, message.body);
+            $m.find('code').append(highlighted.value);
+        }
+        $m.appendTo($chatList);
+        $chatList.animate({
+            scrollTop: $chatList.prop('scrollHeight')
+        }, "slow");
+    });
+    $(document).ready(function () { // code highlight
+        $('pre code').each(function (i, block) {
+            hljs.highlightBlock(block);
+        });
+        $chatList.animate({
+            scrollTop: $chatList.prop('scrollHeight')
+        }, "slow");
+        // get user list
+        $
+            .ajax({
+                url: '/api/group/' + groupId + '/users'
+            })
+            .fail(function (req, status, err) {})
+            .done(function (data) {
+            $userList.append(data.users.map(renderUser));
+        })
+        $chatForm
+            .keypress(function (e) {
+            if (e.which == 13 && ! e.ctrlKey) {
+                e.preventDefault();
+                $(this).closest('form').submit();
+                return false;
+            }
+        })
+        $chatForm
+            .submit(function () {
+            socket.emit(
+                'send message', $chatInput.val(), isNeedHighlighting
+                ? isNeedHighlighting
+                : "text");
+            $chatInput.val('');
+            return false;
+        })
+        $renameButton
+            .click(function () {
+            var newName = prompt('새 이름을 입력해주세요');
+            $.ajax({
+                type: 'POST',
+                url: '/api/group/' + groupId + '/rename',
+                data: {
+                    new_name: newName
+                }
+            }).done(function (data) {
+                $('#group-name').text(data.success)
+            })
+        })
+        $highlightButton
+            .click(function () {
+            if (isNeedHighlighting === false) {
+                isNeedHighlighting = prompt('Select language');
+                $highlightButton.addClass('active');
+                $highlightButton.text(isNeedHighlighting);
+            } else {
+                isNeedHighlighting = false;
+                $highlightButton.removeClass('active');
+                $highlightButton.text('');
+                $highlightButton.prepend('<img type="image" style="width:20px;" src="https://static.thenounproject.com/png/37572-200.png" />')
+            }
+        })
+        $groupOutButton
+            .click(function () {
+            $.ajax({
+                type: 'POST',
+                url: '/api/group/' + groupId + '/groupOut'
+            }).done(function (data) {
+                window.location.href = '/';
+            })
+        })
+    })
+</script>

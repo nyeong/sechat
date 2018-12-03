@@ -31,7 +31,7 @@
 }
 
 #group-page #user-list {
-    margin: 10px 0;
+  margin: 10px 0;
 }
 
 #group-page #user-list .user-item {
@@ -196,4 +196,51 @@ caption a:visited {
 
 #home-page .user.item:not(.active) {
   opacity: 0.4;
+}
+
+#container {
+  width: 1200px;
+  margin: 10px auto;
+  padding: 0;
+  border: 1px solid #bcbcbc;
+}
+#header {
+  padding: 20px;
+  margin-bottom: 0;
+}
+#roomMainBar {
+  width: 900px;
+  height: 670px;
+  padding: 20px;
+  margin-bottom: 20px;
+  float: left;
+  border: 1px solid #bcbcbc;
+}
+#roomBar {
+  width: 860px;
+  height: 120px;
+  padding: 20px;
+  margin-bottom: 10px;
+  border: 1px solid #bcbcbc;
+}
+#currentUserbar {
+  position: relative;
+  width: 298px;
+  height: 670px;
+  padding: 20px;
+  float: right;
+  border: 1px solid #bcbcbc;
+}
+#currentUserbar #userbar {
+  position: relative;
+  width: 298px;
+  height: 650px;
+  padding: 20px;
+  float: right;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#currentUserbar #bottombar {
+  position: absolute;
+  bottom: 0;
 }

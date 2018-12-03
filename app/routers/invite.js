@@ -23,8 +23,9 @@ router.get("/group/:group_id/invite", (req, res) => {
 });
 
 router.post("/api/group/:group_id/invite", (req, res) => {
-  let users = req.body["users[]"];
+  let users = req.body["users"];
   let groupId = req.params.group_id;
+  console.log(req.body);
   User.find()
     .where("_id")
     .in(users)

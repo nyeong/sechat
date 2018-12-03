@@ -1,4 +1,7 @@
 <script>
+$(function() {
+    $('.ui.container.SEcontainer').attr('style', 'margin: 0 !important;');
+})
 const events = <%- JSON.stringify(group.events) %>;
 var currentDate; //동적 date 변수
 var currentYear; //동적 date 변수
