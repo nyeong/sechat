@@ -145,7 +145,8 @@ $(document).ready(function() {
     } else {
       isNeedHighlighting = false;
       $highlightButton.removeClass('active');
-      $highlightButton.text('Code');
+	  $highlightButton.text('');
+	  $highlightButton.prepend('<img type="image" style="width:20px;" src="https://static.thenounproject.com/png/37572-200.png" />')
     }
   })
 
