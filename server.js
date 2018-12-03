@@ -12,8 +12,8 @@ const expressSanitizer = require("express-sanitizer");
 
 class Server {
   constructor() {
-    this.dbUserName = process.env.DB_USERNAME;
-    this.dbPassword = process.env.DB_PASSWORD;
+    this.dbUserName = 'sechat';
+    this.dbPassword = 'admin1234';
     this.dbURL = `mongodb://${this.dbUserName}:${
       this.dbPassword
     }@ds039768.mlab.com:39768/sechat`;
