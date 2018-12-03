@@ -7,15 +7,19 @@ const User = require("../models/user");
 router.use(utils.sessionChcker);
 
 router.get("/", (req, res) => {
-  User.findById(req.session.user.id)
-    .populate("groups")
-    .exec((err, user) => {
-      if (err) throw err;
-      res.render("home", {
-        title: "title",
-        groups: user.groups
+  User.find({}).then(users => {
+    User.findById(req.session.user.id)
+      .populate("groups")
+      .exec((err, user) => {
+        if (err) throw err;
+        res.render("home", {
+          title: "title",
+          groups: user.groups,
+          username: user.username,
+          users: users
+        });
       });
-    });
+  });
 });
 
 router.get("/new_group/", (req, res) => {
