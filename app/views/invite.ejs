@@ -2,24 +2,29 @@
 
 <div id="invite-page">
 
-  <div>
-  <% for (let user of users) { %>
-  <div class="field">
-    <div class="ui checkbox">
-    <% if (user.alreadyMember) { %>
-      <input type="checkbox" checked disabled>
-    <% } else { %>
-      <input type="checkbox" value="<%= user._id%>" class="user">
-    <% } %>
-      <label><%= user.username %></label>
+  <form class="ui form">
+    <% for (let user of users) { %>
+    <div class="field">
+      <div class="ui checkbox">
+      <% if (user.alreadyMember) { %>
+        <input type="checkbox" checked disabled>
+      <% } else { %>
+        <input type="checkbox" value="<%= user._id%>" class="user">
+      <% } %>
+        <label><%= user.username %></label>
+      </div>
     </div>
-  </div>
-  <% } %>
-  <div class="ui primary button" id="invite-button">
-    초대하기
-  </div>
+    <% } %>
 
-  </div>
+    <button type="submit" class="ui primary button" id="invite-button">
+      초대하기
+    </button>
+
+    <button type="reset" class="ui red button" id="invite-button">
+      리셋하기
+    </button>
+
+  </form>
 
 
 <div>
@@ -28,8 +33,9 @@
 $(function () {
   var groupId = "<%= groupId %>";
 
-  $('#invite-button').click(function() {
-    var users = $('.user').filter(':checked').map(function() { return $(this).val(); });
+  $('form').submit(function() {
+    var users = [];
+    $('.user:checked').each(function() { users.push($(this).val()); });
     console.log(users);
     $.ajax({
       url: '/api/group/' + groupId + '/invite',
@@ -37,7 +43,9 @@ $(function () {
       data: {
         users: users
       }
-    }).then(({success}) => document.location.href = success)
+    }).done(({success}) => document.location.href = success)
+      .fail(err => console.log(err))
+    return false;
   })
 });
 </script>

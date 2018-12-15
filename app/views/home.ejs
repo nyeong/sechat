@@ -1,11 +1,11 @@
 <%- include partials/site-menu.ejs %>
 
 <div id="home-page" class="ui grid">
+  <header class="row">
+    <img class="ui image centered" style="width: 280px; height: 100%" src="/logo.png">
+  </header>
   <div class="row">
     <div id="home-page--groups" class="twelve wide column">
-      <header>
-        <h1><%= title %></h1>
-      </header>
       <% for (let group of groups) { %>
         <a href="/group/<%= group._id %>" class="group ui black segment">
           <h2>

@@ -25,7 +25,7 @@ router.get("/group/:group_id", utils.authChecker, (req, res) => {
     });
 });
 
-router.get("/api/group/:group_id/users", (req, res) => {
+router.get("/api/group/:group_id/users", utils.authChecker, (req, res) => {
   Group.findById(req.params.group_id)
     .populate("users")
     .exec((err, group) => {
@@ -42,7 +42,7 @@ router.get("/api/group/:group_id/users", (req, res) => {
     });
 });
 
-router.post("/api/group/:group_id/rename", (req, res) => {
+router.post("/api/group/:group_id/rename", utils.authChecker, (req, res) => {
   Group.findById(req.params.group_id, (err, group) => {
     if (!group) return res.status(404).json({ error: "not found" });
     group.name = req.body.new_name;
@@ -54,7 +54,7 @@ router.post("/api/group/:group_id/rename", (req, res) => {
   });
 });
 
-router.post("/api/group/:group_id/groupOut", (req, res) => {
+router.post("/api/group/:group_id/groupOut", utils.authChecker, (req, res) => {
   let groupId = req.params.group_id;
   let userId = req.session.user.id;
   Group.findById(groupId, (err, group) => {

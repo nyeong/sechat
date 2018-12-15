@@ -9,8 +9,9 @@ module.exports = function(io) {
     socket.on("add user", (userId, groupId) => {
       socket.userId = userId;
       socket.groupId = groupId;
-      usernames[userId] = userId;
+      usernames[userId] = true;
       socket.join(groupId);
+      console.log(usernames);
     });
 
     socket.on("send message", (data, type) => {
@@ -25,5 +26,9 @@ module.exports = function(io) {
         )
       );
     });
+  });
+
+  io.sockets.on("disconnection", socket => {
+    console.log(socket, usernames);
   });
 };

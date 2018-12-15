@@ -3,6 +3,7 @@ $(function() {
     $('.ui.container.SEcontainer').attr('style', 'margin: 0 !important;');
 })
 const events = <%- JSON.stringify(group.events) %>;
+console.log(events)
 var currentDate; //동적 date 변수
 var currentYear; //동적 date 변수
 var currentMonth; //동적 date 변수   다음 달이나 이전 달 클릭시 동적인 날짜가 이 변수에다 저장됨
@@ -92,30 +93,6 @@ function addEvent(year,month,day) {
             console.log(err);
         });
 
-        newDetails += "/";
-
-        if (typeof(Storage) !== "undefined") {
-            //저장소에서 아무론 스캐줄이 저장되지 않을 경우 (기존 스캐줄 꺼낼 필요 없이 새로운 스캐줄 바로 저장해도 됨)
-            if (localStorage.getItem("isEvent") === "no") {
-                localStorage.setItem("eventDate", (newDate.toString()));
-                localStorage.setItem("eventDetails", newDetails);
-                localStorage.setItem("isEvent", "yes");
-            }
-            //저장소에서 기존에 스캐줄이 있을 경우
-            else {
-                //모든 스캐줄을 꺼내서 새로운 스캐줄과 합쳐서 다시 저장하는 과정
-                var tempDate = "";
-                var tempDetails = "";
-                tempDate = localStorage.getItem("eventDate");
-                tempDetails = localStorage.getItem("eventDetails");
-
-                tempDate += (newDate.toString());
-                tempDetails += newDetails;
-
-                localStorage.setItem("eventDate", (tempDate));
-                localStorage.setItem("eventDetails", (tempDetails));
-            }
-        }
         alert("Event successfully saved!");
         location.reload(); //성공적으로 저장한 다음에 페이지를 다시 실행
     }
@@ -140,11 +117,9 @@ function deleteEvent(year,month,day) {
 function getEvent(year,month,day) {
 
     //기존의 모든 스캐줄을 꺼내서 하나씩 검사하고 있으면 이벤트 반환, 없으면 없다고 반환
-    if(localStorage.getItem("isEvent")==="yes"){
-        for (let event of events) {
-            if (new Date(event.date).toString() === new Date(year, month, day).toString()) {
-                return event.body;
-            }
+    for (let event of events) {
+        if (new Date(event.date).toString() === new Date(year, month, day).toString()) {
+            return event.body;
         }
     }
     return "no";
@@ -250,7 +225,6 @@ function makeCalendar() {
     document.write("</tr></tbody></table></div> ");
 
 }
-
 
 initDate();
 </script>
